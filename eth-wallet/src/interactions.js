@@ -17,20 +17,20 @@ export const signAndEncryptMessage = async (web3, inputMessage) => {
 
     // const message = web3.utils.sha3(inputMessage);
     // console.log('message', message)
+    
+    const encryptedMessage = await web3.eth.accounts.wallet.encrypt(inputMessage)
+    console.log("Encrypted Message is, ", encryptedMessage)
 
-    const signedMessage = await  web3.eth.sign(inputMessage, wallet[0].address)
-    console.log("Signed  Message is, ", signedMessage)
-    const encryptedSignedMessage = await web3.eth.accounts.wallet.encrypt(signedMessage)
- 
-    console.log("Encrypted Message is, ", encryptedSignedMessage)
-    return [signedMessage, encryptedSignedMessage];       
+    const encryptedSignedMessage = await  web3.eth.sign(encryptedMessage[0].crypto.ciphertext, wallet[0].address)
+    console.log("Signed  Message is, ", encryptedSignedMessage)
+  
+    return [encryptedMessage, encryptedSignedMessage];       
     }
 
-export const decryptMessage = (web3, encryptedMessage, signedMessage, privateKeyInput) => {
-    // const walletPrivateKey = wallet[0].privatekey;
-    let decryptedMessage;
-    // if(walletPrivateKey === privateKeyInput) {
-      decryptedMessage = web3.eth.accounts.wallet.decrypt(encryptedMessage, signedMessage)
-    // }
-    return decryptedMessage
+export const decryptMessage = (web3, encryptedMessage, inputMessage, passwordInput) => {
+  let decryptedMessage;
+  if (passwordInput === inputMessage) {
+    decryptedMessage = web3.eth.accounts.wallet.decrypt(encryptedMessage, inputMessage)
+  }
+  return decryptedMessage
 }
